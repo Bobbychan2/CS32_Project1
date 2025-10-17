@@ -92,6 +92,9 @@ using namespace DateUtil;
     BloodDonation tooYoung("123456", 20, 150.0, "2025-06-01");
     assert(tooYoung.validate() == "BAD_AGE");
 
+    BloodDonation tooOld("123456", 66, 150.0, "2025-06-01");
+    assert(tooYoung.validate() == "BAD_AGE");
+
     // Invalid date
     BloodDonation badDate("123456", 40, 150.0, "2025-02-30");  
     assert(badDate.validate() == "BAD_DATE");

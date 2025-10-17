@@ -70,7 +70,7 @@ using namespace DateUtil;
     assert(acc.add(sameDay) == "SAME_DAY");        // duplicate calendar date
 
     BloodDonation dayAfter("123456", 30, 150.0, "2025-01-02");
-    assert(acc.add(dayAfter) == "TOO_SOON");              // ADDED THIS TEST CASE
+    assert(acc.add(dayAfter) == "TOO_SOON");              // ADDED THIS TEST CASE (tests the day after)
 
     BloodDonation tooSoon("123456", 30, 150.0, "2025-06-29");
     assert(tooSoon.validate() == "OK");
@@ -112,35 +112,36 @@ using namespace DateUtil;
 
     VacationAccount VacationMaster("111111");
 
-    // VALID donation matching employee ID should be accepted
+    // Valid donation matching employee ID should be accepted
     BloodDonation validDonation("111111", 30, 150.0, "2025-01-01");
     assert(validDonation.validate() == "OK");
     assert(VacationMaster.add(validDonation) == "OK");
     assert(VacationMaster.size() == 1);            // One accepted donation
     assert(VacationMaster.balanceHours() == 4.0);  // 4 vacation hours added
 
-    // INVALID donation with mismatched ID should be rejected
+    // Invalid donation with mismatched ID should be rejected
     BloodDonation invalidIDDonation("222222", 30, 150.0, "2025-07-01");
     assert(invalidIDDonation.validate() == "OK");
-    assert(VacationMaster.add(invalidIDDonation) == "BAD_ID"); // Expect rejection
+    assert(VacationMaster.add(invalidIDDonation) == "BAD_ID"); // Expect reject
     assert(VacationMaster.size() == 1);             // Size unchanged
     assert(VacationMaster.balanceHours() == 4.0);   // Hours unchanged
 
-    // Another VALID donation with correct ID and sufficient spacing
+    // Another valid donation
     BloodDonation validDonation2("111111", 30, 150.0, "2025-07-01");
     assert(validDonation2.validate() == "OK");
     assert(VacationMaster.add(validDonation2) == "OK");
-    assert(VacationMaster.size() == 2);             // Two accepted donations
-    assert(VacationMaster.balanceHours() == 8.0);   // 8 vacation hours accumulated
+    assert(VacationMaster.size() == 2);             // Size should incrememnt
+    assert(VacationMaster.balanceHours() == 8.0);   // Test to see if prev one stored properly and tests if second added properly
 
     // Attempt a valid donation but too soon after last valid donation
     BloodDonation tooSoonDonation("111111", 30, 150.0, "2025-08-01");
     assert(tooSoonDonation.validate() == "OK");
-    assert(VacationMaster.add(tooSoonDonation) == "TOO_SOON"); // Expect rejection
+    assert(VacationMaster.add(tooSoonDonation) == "TOO_SOON"); // Expect reject
     assert(VacationMaster.size() == 2);            // Size unchanged
     assert(VacationMaster.balanceHours() == 8.0); // Hours unchanged
 
-    // Testing object destruction
+    //---------------------Deep Copy---------------------// 
+
     VacationAccount acc1("123456");
     acc1.add(BloodDonation("123456", 30, 150.0, "2025-01-01"));
 
